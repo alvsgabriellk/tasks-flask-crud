@@ -4,7 +4,7 @@ app = Flask(__name__) # nome do arquivo atual
 
 tasks = [] # banco de dados simples e temporario
 task_id_control = 1 # proximo id disponivel
-# C - CRUD / CREATE
+# C - CRUD / CREATE //////////////////////////////// CRIANDO UM DADO
 @app.route('/tasks', methods=['POST'])
 def create_tasks():
     global task_id_control # vai modificar a variavel global
@@ -15,7 +15,7 @@ def create_tasks():
     print(tasks)
     return jsonify({"message": "Nova tarefa criada com sucesso"}) # resposta da API
 
-# R - CRUD / READ //// LENDO TODOS OS DADOS
+# R - CRUD / READ /////////////////////////////////// LENDO TODOS OS DADOS
 @app.route('/tasks', methods=['GET']) # ta requisitando os dados
 def get_tasks():
     #metodo simples e menos visual
@@ -30,7 +30,7 @@ def get_tasks():
         }
     return jsonify(outpot) # RETORNAR EM JSON PRA A API
 
-# R - CRUD / READ //// LENDO APENAS UM DADO EM ESPECIFICO
+# R - CRUD / READ //////////////////////////////// LENDO APENAS UM DADO EM ESPECIFICO
 @app.route('/tasks/<int:id>', methods=['GET'])
 def get_task(id):
     task = None
@@ -40,6 +40,8 @@ def get_task(id):
         
     return jsonify({"message": "Não foi possível encontrar a atividade."}), 404
 
+
+# U - CRUD / UPDATE /////////////////////////// ATUALIZANDO DADOS
 @app.route('/tasks/<int:id>', methods=['PUT'])
 def update_task(id):
     task = None
@@ -50,12 +52,26 @@ def update_task(id):
     if task == None:
         return jsonify({"message": "Não foi possível encontrar a atividade."}), 404
     
-    data = request.get_json()
+    data = request.get_json() # vai pegar a requisição dos dados em json
     task.title = data['titulo']
     task.descricao = data['descricao']
     task.completo = data['completo']
     print(task)
     return jsonify({"message": "Tarefa atualizada com sucesso"})
+
+# D - CRUD / DELETE //////////////////// DELETAR DADOS
+@app.route('/tasks/<int:id>', methods=['DELETE'])
+def delete_task(id):
+    task = None
+    for t in tasks:
+        if t.id == id:
+            task = t
+
+    if not task:
+        return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404
+    
+    tasks.remove(task)
+    return jsonify({"message": "Tarefa deletada com sucesso."})
 
 if __name__ == "__main__":
     app.run(debug=True)
