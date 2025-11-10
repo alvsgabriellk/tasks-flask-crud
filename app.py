@@ -64,11 +64,13 @@ def update_task(id):
 def delete_task(id):
     task = None
     for t in tasks:
+        print(t.to_dict())
         if t.id == id:
             task = t
+            break
 
     if not task:
-        return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404
+        return jsonify({"message": "Não foi possivel encontrar a atividade."}), 404
     
     tasks.remove(task)
     return jsonify({"message": "Tarefa deletada com sucesso."})
